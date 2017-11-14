@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--附 : 注入hibernate校验对象-->
+    <bean class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
+          id="validatorFactoryBean">
+        <!--声明输入验证的提供者是hibernate-->
+        <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+    </bean>
+
+    <!--附 : 配置登录拦截器-->
+    <mvc:interceptors>
+        <!--拦截器执行的顺序依照下面的加入顺序执行-->
+        <mvc:interceptor>
+            <!--要拦截的请求路径-->
+            <mvc:mapping path="/**"/>
+            <!--不拦截资源-->
+            <mvc:exclude-mapping path="/resources/**"/>
+            <mvc:exclude-mapping path="/user_admin/getVerifyCode"/>
+            <mvc:exclude-mapping path="/user_admin/login"/>
+            <!--拦截器所对应的类路径-->
+            <bean class="com.lanou.user.Interceptor.AdminInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+
+
+
+    <!--&lt;!&ndash;1. 加入注解扫描驱动&ndash;&gt;-->
+    <mvc:annotation-driven validator="validatorFactoryBean"/>
+    <!--<mvc:annotation-driven />-->
+
+    <!--2. 配置注解扫描的基础包-->
+    <context:component-scan base-package="com.lanou"/>
+
+    <!--3. springmvc第一条 : 将静态资源的处理经由Spring MVC框架交由Web应用服务器处理-->
+    <mvc:default-servlet-handler/>
+
+    <!--4. springmvc第二条 : 配置视图解析规则-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--配置视图解析的前缀-->
+        <property name="prefix" value="/WEB-INF/"/>
+        <!--配置视图解析的后缀-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--5.1. 引入db属性文件-->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <!--5.2. 配置数据源-->
+    <bean class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          id="dataSource">
+        <property name="driverClass" value="${driver}"/>
+        <property name="jdbcUrl" value="${url}"/>
+        <property name="user" value="${username}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+
+    <!--6. 配置SessionFactory对象-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean"
+          id="sessionFactory">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath*:com/lanou/*/mapper/*.xml"/>
+    </bean>
+
+    <!--7. 配置mybatis中的mapper接口自动扫描-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--mapper接口代理对象所在的包-->
+        <property name="basePackage" value="com.lanou.user.mapper,com.lanou.cost.mapper"/>
+        <!--定义sessionFactory, 引用上面配置的工厂对象-->
+        <property name="sqlSessionFactoryBeanName" value="sessionFactory"/>
+    </bean>
+
+    <!--(可选)-->
+
+    <!--1. 配置事务-->
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          id="transactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--2. 配置事务属性-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--3. 配置切面-->
+    <aop:config>
+        <aop:pointcut id="pointcut" expression="execution(* com.lanou.*.mapper.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut"/>
+    </aop:config>
+
+
+</beans>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.lanou.user.mapper.RoleMapper">
+
+    <resultMap id="roleMap" type="com.lanou.user.domain.Role">
+        <id column="r_id" property="id"/>
+        <result column="r_name" property="name"/>
+        <collection property="privilegeList" ofType="com.lanou.user.domain.Privilege">
+            <id column="p_id" property="id"/>
+            <result column="p_name" property="name"/>
+        </collection>
+    </resultMap>
+    <resultMap id="priviMap" type="com.lanou.user.domain.Privilege">
+        <id column="p_id" property="id"/>
+        <result column="p_name" property="name"/>
+    </resultMap>
+
+    <!--查询所有角色-->
+    <select id="findAll" resultMap="roleMap">
+        SELECT * FROM role_info,privilege_info,ROLE_PRIVILEGE
+        WHERE ROLE_PRIVILEGE.ROLE_ID = ROLE_INFO.R_ID
+        AND ROLE_PRIVILEGE.PRIVILEGE_ID = PRIVILEGE_INFO.p_ID;
+    </select>
+
+    <!--查所有权限-->
+    <select id="findAllPrivi" resultMap="priviMap">
+        SELECT * FROM privilege_info
+    </select>
+
+    <!--添加角色-->
+    <insert id="addRole" parameterType="com.lanou.user.domain.Role">
+        INSERT INTO role_info (r_name) VALUES (#{name})
+    </insert>
+
+    <!--角色id查用户-->
+    <select id="findById" parameterType="int" resultType="int">
+        SELECT * FROM admin_role WHERE role_id = #{value}
+    </select>
+    <!--删除角色-->
+    <delete id="delete" parameterType="int">
+    DELETE role_info,ROLE_PRIVILEGE from role_info LEFT JOIN ROLE_PRIVILEGE
+    ON role_info.r_id = ROLE_PRIVILEGE.ROLE_ID WHERE role_info.r_id=#{value}
+    </delete>
+    <!--根据ID查角色信息-->
+    <select id="findRoleById" parameterType="int" resultMap="roleMap">
+        SELECT * FROM role_info WHERE r_id=#{value}
+    </select>
+
+</mapper>

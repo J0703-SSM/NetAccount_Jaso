@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.lanou.user.mapper.AdminMapper">
+
+    <resultMap id="adminMap" type="com.lanou.user.domain.Admin">
+        <id column="id" property="id"/>
+        <result column="admin_code" property="admin_code"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="telephone" property="telephone"/>
+        <result column="email" property="email"/>
+        <result column="enrolldate" property="enrolldate"/>
+    </resultMap>
+    <resultMap id="adminAndRoleAndPrivilege" type="com.lanou.user.domain.Admin" extends="adminMap">
+
+        <collection property="roleList" ofType="com.lanou.user.domain.Role">
+            <id column="r_id" property="id"/>
+            <result column="r_name" property="name"/>
+            <collection property="privilegeList" ofType="com.lanou.user.domain.Privilege">
+                <id column="p_id" property="id"/>
+                <result column="p_name" property="name"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    
+    <!--验证账号-->
+    <select id="verifyAdmin"
+            parameterType="com.lanou.user.domain.Admin"
+            resultMap="adminAndRoleAndPrivilege">
+        SELECT
+        *
+        FROM admin_info,ADMIN_ROLE,PRIVILEGE_INFO,ROLE_INFO,ROLE_PRIVILEGE
+
+        WHERE admin_info.admin_code = #{admin_code}
+        AND admin_info.password = #{password}
+
+        AND ADMIN_ROLE.ADMIN_ID = admin_info.id
+        AND ADMIN_ROLE.ROLE_ID = ROLE_INFO.R_ID
+        AND ROLE_PRIVILEGE.ROLE_ID = ROLE_INFO.R_ID
+        AND ROLE_PRIVILEGE.PRIVILEGE_ID = PRIVILEGE_INFO.p_ID;
+    </select>
+
+
+    <!--修改密码-->
+    <update id="updatePwd" parameterType="com.lanou.user.domain.Admin">
+        UPDATE admin_info SET password = #{password} WHERE id=#{id}
+    </update>
+
+    <!--修改信息-->
+    <update id="updateAdmin" parameterType="com.lanou.user.domain.Admin">
+        UPDATE admin_info SET name = #{name} , telephone = #{telephone} , email = #{email} WHERE id=#{id}
+    </update>
+
+    <!--查所有-->
+    <select id="findAll" resultMap="adminAndRoleAndPrivilege">
+        SELECT * FROM  admin_info
+    </select>
+
+
+</mapper>
