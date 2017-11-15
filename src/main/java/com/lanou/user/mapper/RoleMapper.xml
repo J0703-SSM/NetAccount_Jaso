@@ -49,4 +49,21 @@
         SELECT * FROM role_info WHERE r_id=#{value}
     </select>
 
+    <!--根据名称查角色-->
+    <select id="findByName" parameterType="java.lang.String" resultMap="roleMap">
+        SELECT * FROM role_info WHERE r_name = #{value}
+    </select>
+    <!--添加权限-->
+    <insert id="addPriviForRole" parameterType="com.lanou.user.domain.Role_Privi">
+        INSERT into role_privilege (role_id,privilege_id) VALUES (#{role_id},#{privilege_id})
+    </insert>
+    <!--编辑角色-->
+    <update id="editRole" parameterType="com.lanou.user.domain.Role">
+        UPDATE role_info SET r_name = #{name} WHERE r_id = #{id}
+    </update>
+
+    <!--删权限-->
+    <delete id="delePrivi" parameterType="int">
+        DELETE FROM role_privilege WHERE role_id=#{value}
+    </delete>
 </mapper>

@@ -39,12 +39,12 @@ public class MainController {
     //管理员
     @RequestMapping("/admin_list")
     public String admin_list() {
-        return "admin/admin_list";
+        return "forward:user_admin/findAllAdmin";
     }
     //资费
     @RequestMapping("/fee_list")
     public String fee_list() {
-        return "fee/fee_list";
+        return "forward:cost/findAll";
     }
     //账务账号
     @RequestMapping("/account_list")
@@ -82,5 +82,9 @@ public class MainController {
     public String role_add() {
         return "role/role_add";
     }
+
+    //添加资费
+    @RequestMapping("/fee_add")
+    public String fee_add(){return "fee/fee_add";}
 
 }

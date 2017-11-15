@@ -8,9 +8,28 @@
         <script language="javascript" type="text/javascript">
             //保存结果的提示
             function showResult() {
-                showResultDiv(true);
-                window.setTimeout("showResultDiv(false);", 3000);
+
+                //提交表单
+                $.ajax({
+                    url: "/cost/addCost",
+                    type: "get",
+                    data: {
+                        "privilegeList":privis,
+                        "name":$("#role_name").val()
+                    },
+                    success: function (data) {
+                        if (data == 0){
+                            showResultDiv(true);
+                            window.setTimeout("showResultDiv(false);", 3000);
+                        }else {
+                            $("#save_result_info").html("保存成功!");
+                            showResultDiv(true);
+                            window.setTimeout("showResultDiv(false);", 3000);
+                        }
+                    }
+                });
             }
+
             function showResultDiv(flag) {
                 var divResult = document.getElementById("save_result_info");
                 if (flag)
@@ -66,19 +85,21 @@
                 <li><a href="/index" class="index_off"></a></li>
                 <li><a href="/user_role/findAllRole" class="role_off"></a></li>
                 <li><a href="/admin_list" class="admin_off"></a></li>
-                <li><a href="/fee_list" class="fee_off"></a></li>
+                <li><a href="/fee_list" class="fee_on"></a></li>
                 <li><a href="/account_list" class="account_off"></a></li>
                 <li><a href="/service_list" class="service_off"></a></li>
                 <li><a href="/bill_list" class="bill_off"></a></li>
                 <li><a href="/report_list" class="report_off"></a></li>
                 <li><a href="/user_info" class="information_off"></a></li>
-                <li><a href="/user_modi_pwd" class="password_on"></a></li>
+                <li><a href="/user_modi_pwd" class="password_off"></a></li>
             </ul>
         </div>
         <!--导航区域结束-->
         <!--主要区域开始-->
         <div id="main">            
             <div id="save_result_info" class="save_fail">保存失败，资费名称重复！</div>
+
+            <%--表单--%>
             <form action="" method="" class="main_form">
                 <div class="text_info clearfix"><span>资费名称：</span></div>
                 <div class="input_info">
@@ -123,7 +144,7 @@
                 </div>                    
                 <div class="button_info clearfix">
                     <input type="button" value="保存" class="btn_save"  onclick="showResult();" />
-                    <input type="button" value="取消" class="btn_save" />
+                    <input type="button" value="取消" class="btn_save" onclick="location.href='/fee_list'"/>
                 </div>
             </form>  
         </div>

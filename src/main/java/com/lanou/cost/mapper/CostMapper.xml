@@ -3,4 +3,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
         <mapper namespace="com.lanou.cost.mapper.CostMapper">
 
+        <!--查询所有-->
+        <select id="findAll" parameterType="com.lanou.base.util.PageExt"
+                resultType="com.lanou.cost.domain.Cost">
+                select * from cost limit #{pc},3
+        </select>
+        <!--总数-->
+        <select id="count" resultType="int">
+                SELECT COUNT(*) FROM cost
+        </select>
+        <!--启用-->
+        <update id="operate" parameterType="com.lanou.cost.domain.Cost">
+                UPDATE cost SET status = 1,startime = #{startime} WHERE cost_id=#{cost_id}
+        </update>
+        <!--删除-->
+        <delete id="delete" parameterType="int">
+                DELETE FROM cost WHERE cost_id=#{value}
+        </delete>
+
 </mapper>

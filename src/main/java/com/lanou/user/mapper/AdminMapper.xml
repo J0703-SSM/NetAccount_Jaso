@@ -57,7 +57,15 @@
 
     <!--查所有-->
     <select id="findAll" resultMap="adminAndRoleAndPrivilege">
-        SELECT * FROM  admin_info
+        SELECT
+        *
+        FROM admin_info,ADMIN_ROLE,PRIVILEGE_INFO,ROLE_INFO,ROLE_PRIVILEGE
+
+        WHERE
+         ADMIN_ROLE.ADMIN_ID = admin_info.id
+        AND ADMIN_ROLE.ROLE_ID = ROLE_INFO.R_ID
+        AND ROLE_PRIVILEGE.ROLE_ID = ROLE_INFO.R_ID
+        AND ROLE_PRIVILEGE.PRIVILEGE_ID = PRIVILEGE_INFO.p_ID;
     </select>
 
 

@@ -2,6 +2,7 @@ package com.lanou.user.controller;
 
 import com.lanou.user.domain.Privilege;
 import com.lanou.user.domain.Role;
+import com.lanou.user.domain.Role_Privi;
 import com.lanou.user.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,21 +54,36 @@ public class RoleController {
     /**
      * 添加角色
      */
+    @ResponseBody
     @RequestMapping("/addRole")
-    public void addRole(
-            String[] privilegeList, HttpServletRequest request) {
+    public int addRole(
+            @RequestParam(value = "privilegeList[]")
+                    int[] privilegeList,
+            @RequestParam(value = "name")
+                    String name) {
 
-        String[] values = request.getParameterValues("privilegeList");
-        System.out.println(privilegeList);
-//        System.out.println("添加角色名 :" + role.getName());
-//
         //去重复
-//        //添加角色
-//        roleService.addRole(role);
-        //添加权限对应
-//        for (String s : privilegeList) {
-//            System.out.println("复选框 : "+s);
-//        }
+        Role role = roleService.findByName(name);
+        if (role == null) {
+            //添加角色
+            Role newRole = new Role();
+            newRole.setName(name);
+            roleService.addRole(newRole);
+            //添加权限对应
+            for (int i : privilegeList) {
+
+                Role_Privi role_privi = new Role_Privi();
+                role_privi.setRole_id(roleService.findByName(name).getId());
+                role_privi.setPrivilege_id(i);
+                roleService.addPriviForRole(role_privi);
+            }
+
+
+            return 1;
+        }
+        //名字重复,保存失败
+        return 0;
+
 
     }
 
@@ -76,10 +93,7 @@ public class RoleController {
     @ResponseBody
     @RequestMapping("/selectByid")
     public int select(Role role) {
-        System.out.println("要查询角色id : " + role.getId());
         List<Integer> list = roleService.findById(role.getId());
-
-        System.out.println("此角色人数 : "+list.size());
 
         return list.size();
     }
@@ -99,25 +113,51 @@ public class RoleController {
     @RequestMapping("/findByid/{id}")
     public String findByid(
             @PathVariable
-            int id,
-            Model model){
+                    int id,
+            Model model) {
         Role role = roleService.findRoleById(id);
         List<Privilege> allPrivi = roleService.findAllPrivi();
 
-        model.addAttribute("role",role);
-        model.addAttribute("allPrivi",allPrivi);
+        model.addAttribute("role", role);
+        model.addAttribute("allPrivi", allPrivi);
         return "role/role_modi";
     }
 
     /**
      * 编辑角色
      */
+    @ResponseBody
     @RequestMapping("/editRole")
-    public void editRole(
-            String[] privilegeList, HttpServletRequest request) {
+    public int editRole(
+            @RequestParam(value = "privilegeList[]")
+                    int[] privilegeList,
+            @RequestParam(value = "name")
+                    String name,
+            @RequestParam(value = "id")
+                    int id) {
 
-        String[] values = request.getParameterValues("privilegeList");
-        System.out.println(privilegeList);
+        //去重复
+        Role role = roleService.findByName(name);
+        Role role1 = roleService.findRoleById(id);
+        if (role == null || role.getName().equals(role1.getName())) {
+            //编辑角色
+            role1.setName(name);
+            roleService.editRole(role1);
+            //添加权限对应
+            roleService.delePrivi(role1.getId());
+            for (int i : privilegeList) {
+
+                Role_Privi role_privi = new Role_Privi();
+                role_privi.setRole_id(role1.getId());
+                role_privi.setPrivilege_id(i);
+                roleService.addPriviForRole(role_privi);
+            }
+
+
+            return 1;
+        }
+        //名字重复,保存失败
+        return 0;
 
     }
 

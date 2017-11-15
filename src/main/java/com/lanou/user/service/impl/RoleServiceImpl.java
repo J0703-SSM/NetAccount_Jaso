@@ -2,6 +2,7 @@ package com.lanou.user.service.impl;
 
 import com.lanou.user.domain.Privilege;
 import com.lanou.user.domain.Role;
+import com.lanou.user.domain.Role_Privi;
 import com.lanou.user.mapper.RoleMapper;
 import com.lanou.user.service.RoleService;
 import org.springframework.stereotype.Service;
@@ -70,4 +71,39 @@ public class RoleServiceImpl implements RoleService {
     public Role findRoleById(int id) {
         return roleMapper.findRoleById(id);
     }
+
+    /**
+     * 根据名称查角色
+     * @param name
+     * @return
+     */
+    public Role findByName(String name) {
+        return roleMapper.findByName(name);
+    }
+
+    /**
+     * 添加权限
+     * @param role_privi
+     */
+    public void addPriviForRole(Role_Privi role_privi) {
+        roleMapper.addPriviForRole(role_privi);
+    }
+
+    /**
+     * 编辑角色
+     * @param role1
+     */
+    public void editRole(Role role1) {
+        roleMapper.editRole(role1);
+    }
+
+    /**
+     * 删权限
+     * @param id
+     */
+    public void delePrivi(int id) {
+        roleMapper.delePrivi(id);
+    }
+
+
 }

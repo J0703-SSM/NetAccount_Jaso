@@ -136,7 +136,7 @@ public class AdminController {
         Admin admin = (Admin) request.getServletContext().getAttribute("loginAdmin");
         admin.setPassword(formAdmin.getPassword());//更新密码
         request.getServletContext().setAttribute("loginAdmin", admin);
-        System.out.println("更新密码后域中信息 :" + admin);
+        System.out.println("修改密码后域中信息 :" + admin);
         //修改密码
         adminService.updatePwd(admin);
     }
@@ -145,11 +145,13 @@ public class AdminController {
      * 查询所有admin
      */
     @RequestMapping("/findAllAdmin")
-    public void findAllAdmin(HttpServletRequest request){
+    public String findAllAdmin(HttpServletRequest request){
+        
         List<Admin> adminList =adminService.findAll();
 
         System.out.println(adminList);
         request.getServletContext().setAttribute("adminList",adminList);
+        return "admin/admin_list";
     }
 
 }

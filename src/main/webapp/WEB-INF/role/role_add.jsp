@@ -18,7 +18,7 @@
             success: function (data) {
                 var _html = "";
                 $.each(data, function (i, n) {
-                    _html += '<li><input type="checkbox" name="privi" value=' + n.name + ' />' + n.name + '</li>';
+                    _html += '<li><input type="checkbox" name="privi" value=' + n.id + ' />' + n.name + '</li>';
 
                 });
                 $("#privi").append(_html);
@@ -60,7 +60,6 @@
                 $("#sel_msg").html("*至少选择一个权限!");
                 return false;
             }
-            alert(privis.length)
 
 
             //提交表单
@@ -68,17 +67,23 @@
                 url: "/user_role/addRole",
                 type: "get",
                 data: {
-                    "privilegeList":['a','b']
+                    "privilegeList":privis,
+                    "name":$("#role_name").val()
                 },
-                success: function () {}
+                success: function (data) {
+                    if (data == 0){
+                        var q = window.confirm("角色名称存在,添加失败!");
+                    }else {
+                        window.setTimeout("showResultDiv(false);", 3000);
+                    }
+                }
             });
-            window.setTimeout("showResultDiv(false);", 3000);
 
 
         }
         function showResultDiv(flag) {
             var divResult = document.getElementById("save_result_info");
-            if (flag)
+            if (!flag)
                 divResult.style.display = "block";
             else
                 divResult.style.display = "none";
@@ -115,7 +120,7 @@
 <!--主要区域开始-->
 <div id="main">
     <!--保存操作后的提示信息：成功或者失败-->
-    <div id="save_result_info" class="save_success">保存成功！</div><!--保存失败，角色名称重复！-->
+    <div id="save_result_info" class="save_success">保存成功！</div><!---->
 
 
     <form action="" class="main_form">

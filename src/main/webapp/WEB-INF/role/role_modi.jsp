@@ -44,7 +44,6 @@
                     $("#sel_msg").html("*至少选择一个权限!");
                     return false;
                 }
-                alert(privis.length)
 
 
                 //提交表单
@@ -52,17 +51,23 @@
                     url: "/user_role/editRole",
                     type: "get",
                     data: {
-                        "privilegeList":['a','b']
+                        "privilegeList":privis,
+                        "name":$("#role_name").val(),
+                        "id":${role.id}
                     },
-                    success: function () {}
+                    success: function (data) {
+                        if (data == 0){
+                            var q = window.confirm("角色名称存在,编辑失败!");
+                        }else {
+                            window.setTimeout("showResultDiv(false);", 3000);
+                        }
+                    }
                 });
-                window.setTimeout("showResultDiv(false);", 3000);
-
 
             }
             function showResultDiv(flag) {
                 var divResult = document.getElementById("save_result_info");
-                if (flag)
+                if (!flag)
                     divResult.style.display = "block";
                 else
                     divResult.style.display = "none";
@@ -99,7 +104,7 @@
         <!--主要区域开始-->
         <div id="main">           
             <!--保存操作后的提示信息：成功或者失败-->
-            <div id="save_result_info" class="save_success">保存成功！</div>
+            <div id="save_result_info" class="save_success">编辑成功！</div>
             <form action="" method="" class="main_form">
                 <div class="text_info clearfix"><span>角色名称：</span></div>
                 <div class="input_info">
@@ -112,11 +117,7 @@
                     <div class="input_info_scroll">
                         <ul>
                             <c:forEach items="${allPrivi}" var="privi">
-                                <li><input type="checkbox" value="${privi.name}"
-                                           <c:forEach items="${role.privilegeList}" var="rprivi">
-                                               <c:if test="${privi.name == rprivi.name}">checked</c:if>
-                                           </c:forEach>
-                                />${privi.name}</li>
+                                <li><input name="privi" type="checkbox" value="${privi.id}"/>${privi.name}</li>
                             </c:forEach>
 
                         </ul>

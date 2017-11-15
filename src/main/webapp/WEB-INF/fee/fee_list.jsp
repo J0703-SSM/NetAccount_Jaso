@@ -1,11 +1,26 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title></title>
         <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global.css" />
         <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global_color.css" />
+        <script src="/resources/js/jquery-3.2.1.js"></script>
         <script language="javascript" type="text/javascript">
+
+            //页面加载,查询所有条目
+            $.ajax({
+                url: "/cost/findAll?pc=1",
+                type: "get",
+                success: function (data) {}
+
+            });
+
+
+
+
             //排序按钮的点击事件
             function sort(btnObj) {
                 if (btnObj.className == "sort_desc")
@@ -15,14 +30,29 @@
             }
 
             //启用
-            function startFee() {
+            function startFee(id) {
                 var r = window.confirm("确定要启用此资费吗？资费启用后将不能修改和删除。");
+                $.post({
+                    url: "/cost/operate",
+                    data: {
+                        cost_id: id
+                    }
+                });
                 document.getElementById("operate_result_info").style.display = "block";
+//                window.location.reload();
             }
             //删除
-            function deleteFee() {
-                var r = window.confirm("确定要删除此资费吗？");
+            function deleteFee(id) {
+                var q = window.confirm("确定要删除此资费吗？");
+
+                $.post({
+                    url: "/cost/delete",
+                    data: {
+                        cost_id: id
+                    }
+                });
                 document.getElementById("operate_result_info").style.display = "block";
+//                window.location.reload();
             }
         </script>        
     </head>
@@ -59,14 +89,15 @@
                         <input type="button" value="基费" class="sort_asc" onclick="sort(this);" />
                         <input type="button" value="时长" class="sort_asc" onclick="sort(this);" />
                     </div>
-                    <input type="button" value="增加" class="btn_add" onclick="location.href='fee_add.jsp';" />
+                    <input type="button" value="增加" class="btn_add"
+                           onclick="location.href='/fee_add';" />
                 </div> 
                 <!--启用操作的操作提示-->
                 <div id="operate_result_info" class="operate_success">
-                    <img src="../images/close.png" onclick="this.parentNode.style.display='none';" />
-                    删除成功！
-                </div>    
-                <!--数据区域：用表格展示数据-->     
+                    <img src="../../resources/images/close.png" onclick="this.parentNode.style.display='none';window.location.reload();" />
+                    操作成功！
+                </div>
+                <!--数据区域：用表格展示数据-->
                 <div id="data">            
                     <table id="datalist">
                         <tr>
@@ -78,35 +109,47 @@
                             <th>创建时间</th>
                             <th>开通时间</th>
                             <th class="width50">状态</th>
-                            <th class="width200"></th>
-                        </tr>                      
+                            <th class="width200">操作</th>
+                        </tr>
+
+                        <c:forEach items="${applicationScope.pb.beanList}" var="cost">
                         <tr>
-                            <td>1</td>
-                            <td><a href="fee_detail.jsp">包 20 小时</a></td>
-                            <td>20 小时</td>
-                            <td>24.50 元</td>
-                            <td>3.00 元/小时</td>
-                            <td>2013/01/01 00:00:00</td>
-                            <td></td>
-                            <td>暂停</td>
-                            <td>                                
-                                <input type="button" value="启用" class="btn_start" onclick="startFee();" />
-                                <input type="button" value="修改" class="btn_modify" onclick="location.href='fee_modi.jsp';" />
-                                <input type="button" value="删除" class="btn_delete" onclick="deleteFee();" />
+                            <td>${cost.cost_id}</td>
+                            <td><a href="fee_detail.jsp">${cost.name}</a></td>
+                            <td>${cost.base_duration}小时</td>
+                            <td>${cost.base_cost}元</td>
+                            <td>${cost.unit_cost}元/小时</td>
+                            <td>${cost.creatime}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${cost.status == 1}">
+                                        ${cost.startime}
+                                    </c:when>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${cost.status == 0}">
+                                        暂停
+                                    </c:when>
+                                    <c:when test="${cost.status == 1}">
+                                        开通
+                                    </c:when>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <c:if test="${cost.status == '0'}">
+                                    <input type="button" value="启用" class="btn_start"
+                                           onclick="startFee(${cost.cost_id});" />
+                                    <input type="button" value="修改" class="btn_modify"
+                                           onclick="location.href='#';" />
+                                    <input type="button" value="删除" class="btn_delete"
+                                           onclick="deleteFee(${cost.cost_id});" />
+                                </c:if>
+
                             </td>
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><a href="fee_detail.jsp">包 40 小时</a></td>
-                            <td>40 小时</td>
-                            <td>40.50 元</td>
-                            <td>3.00 元/小时</td>
-                            <td>2013/01/21 00:00:00</td>
-                            <td>2013/01/23 00:00:00</td>
-                            <td>开通</td>
-                            <td>                                
-                            </td>
-                        </tr>
+                        </c:forEach>
                     </table>
                     <p>业务说明：<br />
                     1、创建资费时，状态为暂停，记载创建时间；<br />
@@ -117,13 +160,57 @@
                 </div>
                 <!--分页-->
                 <div id="pages">
-        	        <a href="#">上一页</a>
-                    <a href="#" class="current_page">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#">下一页</a>
+                    <a href="/cost/findAll?pc=1">首页</a>
+                    <c:if test="${applicationScope.pb.pc > 1}">
+                        <a href="/cost/findAll?pc=${applicationScope.pb.pc-1}">上一页</a>
+                    </c:if>
+
+
+                    <%--计算 begin  end
+                        > 如 总页数 tp <= 10  :  begin = 1, end = tp
+                        > 如 总页数 >10
+                            使用计算公式: begin = pc - 5    end = pc +4
+                            * 头溢出  begin<1     begin = 1
+                            * 尾溢出  end > tp    end = tp
+                    --%>
+                    <c:choose>
+                        <c:when test="${applicationScope.pb.tp <= 5}">
+                            <c:set var="begin" value="1"/>
+                            <c:set var="end" value="${applicationScope.pb.tp}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="begin" value="${applicationScope.pb.pc-2}"/>
+                            <c:set var="end" value="${applicationScope.pb.pc+2}"/>
+                            <%--头溢出--%>
+                            <c:if test="${begin < 1}">
+                                <c:set var="begin" value="1"/>
+                                <c:set var="end" value="5"/>
+                            </c:if>
+                            <%--尾溢出--%>
+                            <c:if test="${end > applicationScope.pb.tp}">
+                                <c:set var="begin" value="${applicationScope.pb.tp - 4}"/>
+                                <c:set var="end" value="${applicationScope.pb.tp}"/>
+                            </c:if>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <c:forEach var="i" begin="${begin}" end="${end}">
+                        <c:choose>
+                            <c:when test="${applicationScope.pb.pc eq i}">
+                                <a href="#" class="current_page">${i}</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="/cost/findAll?pc=${i}">${i}</a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+
+
+                    <c:if test="${applicationScope.pb.pc < applicationScope.pb.tp}">
+                        <a href="/cost/findAll?pc=${applicationScope.pb.pc+1}">下一页</a>
+                    </c:if>
+                    <a href="/cost/findAll?pc=${applicationScope.pb.tp}">尾页</a>
+
                 </div>
             </form>
         </div>

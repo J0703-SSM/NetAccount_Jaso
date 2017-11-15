@@ -9,6 +9,13 @@
         <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global_color.css" />
         <script src="/resources/js/jquery-3.2.1.js"></script>
         <script language="javascript" type="text/javascript">
+            //获得所有管理员
+            $.ajax({
+                url: "/user_admin/findAllAdmin",
+                type: "get",
+                success: function (data) {}
+
+            });
             //获得所有权限
             $.ajax({
                 url: "/user_role/findAllPrivi",
@@ -20,17 +27,12 @@
 
                     });
                     $("#selModules").append(_html);
+
                 }
 
             });
 
-            //获得所有管理员
-            $.ajax({
-                url: "/user_admin/findAllAdmin",
-                type: "get",
-                success: function (data) {}
 
-            });
 
 
 
@@ -51,7 +53,7 @@
             //删除
             function deleteAdmin() {
                 var r = window.confirm("确定要删除此管理员吗？");
-                document.getElementById("operate_result_info").style.display = "block";
+//                document.getElementById("operate_result_info").style.display = "block";
             }
             //全选
             function selectAdmins(inputObj) {
@@ -148,7 +150,7 @@
                                 </div>
                             </td>
                             <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" onclick="location.href='';" />
+                                <input type="button" value="修改" class="btn_modify" onclick="location.href='#';" />
                                 <input type="button" value="删除" class="btn_delete" onclick="deleteAdmin();" />
                             </td>
                         </tr>
@@ -156,15 +158,15 @@
                     </table>
                 </div>
                 <!--分页-->
-                <div id="pages">
-        	        <a href="#">上一页</a>
-                    <a href="#" class="current_page">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#">下一页</a>
-                </div>                    
+                <%--<div id="pages">--%>
+        	        <%--<a href="#">上一页</a>--%>
+                    <%--<a href="#" class="current_page">1</a>--%>
+                    <%--<a href="#">2</a>--%>
+                    <%--<a href="#">3</a>--%>
+                    <%--<a href="#">4</a>--%>
+                    <%--<a href="#">5</a>--%>
+                    <%--<a href="#">下一页</a>--%>
+                <%--</div>                    --%>
             </form>
         </div>
         <!--主要区域结束-->
