@@ -14,10 +14,10 @@
                 <li><a href="/user_role/findAllRole" class="role_off"></a></li>
                 <li><a href="/admin_list" class="admin_off"></a></li>
                 <li><a href="/fee_list" class="fee_off"></a></li>
-                <%--<li><a href="/account_list" class="account_off"></a></li>--%>
-                <%--<li><a href="/service_list" class="service_off"></a></li>--%>
-                <%--<li><a href="/bill_list" class="bill_off"></a></li>--%>
-                <%--<li><a href="/report_list" class="report_off"></a></li>--%>
+                <li><a href="/account_list" class="account_off"></a></li>
+                <li><a href="/service_list" class="service_off"></a></li>
+                <li><a href="/bill_list" class="bill_off"></a></li>
+                <li><a href="/report_list" class="report_off"></a></li>
                 <li><a href="/user_info" class="information_off"></a></li>
                 <li><a href="/user_modi_pwd" class="password_off"></a></li>
             </ul>

@@ -51,4 +51,43 @@ public class CostServiceImpl implements CostService {
     public void delete(int cost_id) {
         costMapper.delete(cost_id);
     }
+
+    /**
+     * 添加资费
+     * @param cost
+     */
+    public void addCost(Cost cost) {
+        costMapper.addCost(cost);
+    }
+
+    /**
+     * 去重复
+     * @param name
+     * @return
+     */
+    public Cost verifyName(String name) {
+        return costMapper.verifyName(name);
+    }
+
+    /**
+     * 查询(id)
+     * @param id
+     * @return
+     */
+    public Cost findById(int id) {
+        return costMapper.findById(id);
+    }
+
+
+    /**
+     * 编辑
+     */
+    public void updateCost(Cost cost) {
+
+        costMapper.updateCost(cost);
+    }
+//
+//    public List<Cost> findAllOrder(PageExt pageExt) {
+//        return costMapper.findAllOrder(pageExt);
+//    }
 }

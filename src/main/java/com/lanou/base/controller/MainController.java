@@ -87,4 +87,8 @@ public class MainController {
     @RequestMapping("/fee_add")
     public String fee_add(){return "fee/fee_add";}
 
+    //添加管理员
+    @RequestMapping("/admin_add")
+    public String admin_add(){return "admin/admin_add";}
+
 }

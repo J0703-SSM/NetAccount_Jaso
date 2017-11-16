@@ -49,8 +49,8 @@
             });
 
 
-            showResultDiv(true);
-            window.setTimeout("showResultDiv(false);", 3000);
+//            showResultDiv(true);
+//            window.setTimeout("showResultDiv(false);", 3000);
 
             $("#updateAgain").show();
             $("#f").hide();
@@ -92,7 +92,8 @@
 <div id="main">
 
     <div id="updateAgain" class="save_success" style="display: none;text-align: center">
-        <h2>温馨提示:  使用您的新密码去登录吧 : <a href="/user_admin/quit">重新登录</a></h2>
+        <h1>温馨提示: 密码修改成功 !</h1>
+        <h2>使用您的新密码去登录吧 : <a href="/user_admin/quit">重新登录</a></h2>
     </div>
 
     <form id="f" action="" class="main_form">
@@ -121,10 +122,7 @@
         </div>
 
     </form>
-    <!--保存操作后的提示信息：成功或者失败-->
-    <div id="save_result_info" class="save_success">
-        <h1>修改成功!</h1>
-    </div>
+
 </div>
 <!--主要区域结束-->
 <div id="footer">

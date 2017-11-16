@@ -2,6 +2,8 @@ package com.lanou.user.controller;
 
 import com.lanou.base.util.VerifyCode;
 import com.lanou.user.domain.Admin;
+import com.lanou.user.domain.Admin_Role;
+import com.lanou.user.domain.Role;
 import com.lanou.user.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -153,5 +157,51 @@ public class AdminController {
         request.getServletContext().setAttribute("adminList",adminList);
         return "admin/admin_list";
     }
+
+    /**
+     * 查询所有角色
+     */
+    @RequestMapping("/findAllRole")
+    public String findAllRole(Model model){
+        List<Role> roleList = adminService.findAllRole();
+        model.addAttribute("roleList",roleList);
+        return "admin/admin_add";
+    }
+
+    /**
+     * 添加管理员
+     */
+    @RequestMapping("/addAdmin")
+    public String addAdmin(int[] role,Admin admin,HttpServletRequest request){
+        //登录名唯一
+        Admin admin1 = adminService.findByAdminCode(admin.getAdmin_code());
+        if (admin1 == null) {
+            //添加管理员信息
+            Date date = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            df.format(date);
+            admin.setEnrolldate(date);
+            adminService.addAdmin(admin);
+            //回查管理员id
+            int newId = adminService.findByAdminCode(admin.getAdmin_code()).getId();
+            //根据管理员id,添加角色
+            for (int i : role) {
+                Admin_Role admin_role = new Admin_Role(newId, i);
+                adminService.addRoleForAdmin(admin_role);
+            }
+            return "forward:findAllAdmin";
+        }
+        return "0";
+
+    }
+
+    /**
+     * 删除
+     */
+    @RequestMapping("/deleteAdmin")
+    public void deleteAdmin(Admin admin){
+        adminService.deleteAdmin(admin.getId());
+    }
+
 
 }

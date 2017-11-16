@@ -7,7 +7,10 @@ import com.lanou.cost.service.CostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +30,8 @@ public class CostController {
     @Autowired
     private CostService costService;
 
+    //指定每页记录数
+    private int ps = 3;
 
     /**
      * 查询所有
@@ -36,14 +41,36 @@ public class CostController {
     public String findAll(HttpServletRequest request){
         //当前页码
         int pc = getPc(request);
-        //指定每页记录数
-        int ps = 3;
+
         //传递pc ps 获取pageBean
         PageExt pageExt = new PageExt();
-        int pc1 = (pc-1)*3;
-        pageExt.setPc(pc1);
-        pageExt.setPs(ps);
+        //设置分页参数
+        pageExt.setPc((pc-1)*3);
+
+//排序
+        String  sort= request.getParameter("sort");
+        String column = request.getParameter("column");
+        System.out.println(column +" % "+ sort);
+        //
+        request.setAttribute("sort",sort);
+        request.setAttribute("column",column);
+        //默认排序
+        if (sort == null || sort.equals("")){
+            sort = "asc";
+        }
+        if (column == null || column.equals("")){
+            column ="base_cost";
+        }
+
+        //设置排序参数
+        pageExt.setSort(sort);
+        pageExt.setColumn(column);
+
+        //查询
         List<Cost> costList = costService.findAll(pageExt);
+        for (Cost cost : costList) {
+            System.out.println("&&& : "+cost);
+        }
         PageBean<Cost> pb = new PageBean<Cost>();
         //+ bean
         pb.setBeanList(costList);
@@ -51,13 +78,12 @@ public class CostController {
         pb.setPs(ps);
         //+ 当前页
         pb.setPc(pc);
-        System.out.println("资费套餐 : "+costList);
         //+ 总数
         int tr = costService.count();
-        System.out.println("套餐总数 : "+tr);
         pb.setTr(tr);
+
         //= 存入域中
-        request.getServletContext().setAttribute("pb",pb);
+        request.setAttribute("pb",pb);
 
         return "fee/fee_list";
     }
@@ -75,6 +101,8 @@ public class CostController {
         return Integer.parseInt(value);
     }
 
+
+
     /**
      * 启用
      */
@@ -82,7 +110,7 @@ public class CostController {
     public void operate(Cost cost){
         Date date = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        System.out.println(df.format(date));// new Date()为获取当前系统时间
+        df.format(date);// new Date()为获取当前系统时间
         cost.setStartime(date);
         costService.operate(cost);
     }
@@ -92,6 +120,68 @@ public class CostController {
      */
     @RequestMapping("/delete")
     public void delete(Cost cost){
+
         costService.delete(cost.getCost_id());
+    }
+
+    /**
+     * 判重复
+     */
+    @ResponseBody
+    @RequestMapping("/verifyName")
+    public int verifyName(Cost cost){
+        Cost cost1 = costService.verifyName(cost.getName());
+        if (cost1 == null){
+            return 1;
+        }
+        return 0;
+    }
+    /**
+     * 添加
+     */
+    @RequestMapping("/addCost")
+    public String addCost(Cost cost){
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        df.format(date);// new Date()为获取当前系统时间
+        cost.setCreatime(date);//设置创建时间
+        cost.setStatus("0");//设置初始状态(未开启)
+
+        costService.addCost(cost);
+        return "forward:findAll";
+    }
+    /**
+     * 查询(id)
+     */
+    @RequestMapping("/findCost/{id}")
+    public String findCost(
+            @PathVariable
+            int id,
+            Model model
+    ){
+        Cost cost = costService.findById(id);
+        model.addAttribute("cost",cost);
+        return "fee/fee_modi";
+    }
+    /**
+     * 编辑
+     */
+    @RequestMapping("/updateCost")
+    public String updateCost(Cost cost){
+        costService.updateCost(cost);
+        return "forward:findAll";
+    }
+    /**
+     * 明细
+     */
+    @RequestMapping("/detail/{id}")
+    public String detail(
+            @PathVariable
+            int id,
+            Model model
+    ){
+        Cost cost = costService.findById(id);
+        model.addAttribute("cost",cost);
+        return "fee/fee_detail";
     }
 }

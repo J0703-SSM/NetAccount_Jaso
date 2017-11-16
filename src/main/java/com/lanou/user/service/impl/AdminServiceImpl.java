@@ -1,6 +1,8 @@
 package com.lanou.user.service.impl;
 
 import com.lanou.user.domain.Admin;
+import com.lanou.user.domain.Admin_Role;
+import com.lanou.user.domain.Role;
 import com.lanou.user.mapper.AdminMapper;
 import com.lanou.user.service.AdminService;
 import org.springframework.stereotype.Service;
@@ -52,5 +54,46 @@ public class AdminServiceImpl implements AdminService {
      */
     public List<Admin> findAll() {
         return adminMapper.findAll();
+    }
+
+    /**
+     * 查询所有角色
+     * @return
+     */
+    public List<Role> findAllRole() {
+        return adminMapper.findAllRole();
+    }
+
+    /**
+     * 根据登录名查管理员
+     * @param admin_code
+     * @return
+     */
+    public Admin findByAdminCode(String admin_code) {
+        return adminMapper.findByAdminCode(admin_code);
+    }
+
+    /**
+     * 添加管理员
+     * @param admin
+     */
+    public void addAdmin(Admin admin) {
+        adminMapper.addAdmin(admin);
+    }
+
+    /**
+     * 给管理员添加角色
+     * @param admin_role
+     */
+    public void addRoleForAdmin(Admin_Role admin_role) {
+        adminMapper.addRoleForAdmin(admin_role);
+    }
+
+    /**
+     * 删除管理员
+     * @param id
+     */
+    public void deleteAdmin(int id) {
+        adminMapper.deleteAdmin(id);
     }
 }

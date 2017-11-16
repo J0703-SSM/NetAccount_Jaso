@@ -116,6 +116,7 @@ public class RoleController {
                     int id,
             Model model) {
         Role role = roleService.findRoleById(id);
+
         List<Privilege> allPrivi = roleService.findAllPrivi();
 
         model.addAttribute("role", role);

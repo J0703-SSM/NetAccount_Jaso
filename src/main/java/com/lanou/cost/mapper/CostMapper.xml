@@ -6,7 +6,12 @@
         <!--查询所有-->
         <select id="findAll" parameterType="com.lanou.base.util.PageExt"
                 resultType="com.lanou.cost.domain.Cost">
-                select * from cost limit #{pc},3
+                select * from cost ORDER BY ${column} ${sort} limit #{pc},3;
+        </select>
+        <!--排序-->
+        <select id="findAllOrder" parameterType="com.lanou.base.util.PageExt"
+                resultType="com.lanou.cost.domain.Cost">
+                select * from cost ORDER BY #{column} #{sort} limit 1,3;
         </select>
         <!--总数-->
         <select id="count" resultType="int">
@@ -20,5 +25,30 @@
         <delete id="delete" parameterType="int">
                 DELETE FROM cost WHERE cost_id=#{value}
         </delete>
+        <!--添加资费-->
+        <insert id="addCost" parameterType="com.lanou.cost.domain.Cost">
+                INSERT INTO
+                 cost(name,base_duration,base_cost,unit_cost,status,descr,creatime,startime,cost_type)
+                 VALUES
+                 (#{name},#{base_duration},#{base_cost},#{unit_cost},#{status},#{descr},#{creatime},
+                 #{startime},#{cost_type})
+        </insert>
+
+        <!--去重复-->
+        <select id="verifyName" parameterType="java.lang.String" resultType="com.lanou.cost.domain.Cost">
+                SELECT * FROM cost WHERE name=#{value}
+        </select>
+
+        <!--根据id查询-->
+        <select id="findById" parameterType="int" resultType="com.lanou.cost.domain.Cost">
+                SELECT * from cost WHERE cost_id=#{value}
+        </select>
+        <!--修改-->
+        <update id="updateCost" parameterType="com.lanou.cost.domain.Cost">
+                UPDATE cost SET name= #{name},base_duration= #{base_duration},base_cost= #{base_cost},
+                unit_cost= #{unit_cost},
+                descr= #{descr},cost_type=#{cost_type}
+                 WHERE cost_id=#{cost_id}
+        </update>
 
 </mapper>

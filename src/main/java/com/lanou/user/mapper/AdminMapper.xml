@@ -68,5 +68,36 @@
         AND ROLE_PRIVILEGE.PRIVILEGE_ID = PRIVILEGE_INFO.p_ID;
     </select>
 
+    <!--查询所有角色-->
+    <resultMap id="roleMap" type="com.lanou.user.domain.Role">
+        <id column="r_id" property="id"/>
+        <result column="r_name" property="name"/>
+        <collection property="privilegeList" ofType="com.lanou.user.domain.Privilege">
+            <id column="p_id" property="id"/>
+            <result column="p_name" property="name"/>
+        </collection>
+    </resultMap>
+    <select id="findAllRole" resultMap="roleMap">
+        SELECT * from role_info
+    </select>
+
+    <!--根据登录名查管理员-->
+    <select id="findByAdminCode" parameterType="java.lang.String" resultMap="adminMap">
+        SELECT * from admin_info WHERE admin_code = #{value}
+    </select>
+    <!--添加管理元-->
+    <insert id="addAdmin" parameterType="com.lanou.user.domain.Admin">
+        INSERT into admin_info(admin_code,name,password,telephone,email,enrolldate)
+        VALUES (#{admin_code},#{name},#{password},#{telephone},#{email},#{enrolldate})
+    </insert>
+    <!--给管理员添加角色-->
+    <insert id="addRoleForAdmin" parameterType="com.lanou.user.domain.Admin_Role">
+        INSERT into admin_role (admin_id,role_id) VALUES (#{admin_id},#{role_id})
+    </insert>
+    <!--删除-->
+    <delete id="deleteAdmin" parameterType="int">
+        DELETE FROM admin_info WHERE id = #{value}
+    </delete>
+
 
 </mapper>

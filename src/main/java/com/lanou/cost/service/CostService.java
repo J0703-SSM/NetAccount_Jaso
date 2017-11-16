@@ -16,4 +16,14 @@ public interface CostService {
     void operate(Cost cost);
 
     void delete(int cost_id);
+
+    void addCost(Cost cost);
+
+    Cost verifyName(String name);
+
+    Cost findById(int id);
+
+    void updateCost(Cost cost);
+
+//    List<Cost> findAllOrder(PageExt pageExt);
 }

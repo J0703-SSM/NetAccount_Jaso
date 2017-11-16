@@ -46,7 +46,9 @@
     </delete>
     <!--根据ID查角色信息-->
     <select id="findRoleById" parameterType="int" resultMap="roleMap">
-        SELECT * FROM role_info WHERE r_id=#{value}
+        SELECT * FROM role_info,privilege_info,ROLE_PRIVILEGE
+        WHERE ROLE_PRIVILEGE.ROLE_ID = ROLE_INFO.R_ID
+        AND ROLE_PRIVILEGE.PRIVILEGE_ID = PRIVILEGE_INFO.p_ID AND r_id=#{value}
     </select>
 
     <!--根据名称查角色-->
