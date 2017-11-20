@@ -260,7 +260,8 @@ public class AdminController {
             Session session = MailUtils.createSession("smtp.163.com","xinrugao@163.com", "why1993521");
         /*   2>.创建邮件对象   */
             Mail mail = new Mail("xinrugao@163.com",email,"FROM.Jaso.wei",
-                    "<h1>NetAccount</h1><hr><br><h2>您的新的初始密码 : 000000</h2><h4>*为了账户安全,建议您尽快修改初始密码.</h4>");
+                    "<h1>NetAccount</h1><hr><br><h2>确认您的信息:</h2><br><h2>账号: jaso</h2>" +
+                            "<h2>新的初始密码 : 000000</h2><h4>*为了账户安全,建议您尽快修改初始密码.</h4>");
         /*  3>.发送    */
             MailUtils.send(session,mail);
 

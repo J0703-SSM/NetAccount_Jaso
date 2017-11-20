@@ -35,7 +35,7 @@
         *
         FROM admin_info,ADMIN_ROLE,PRIVILEGE_INFO,ROLE_INFO,ROLE_PRIVILEGE
 
-        WHERE admin_info.admin_code = #{admin_code} OR admin_info.email=#{admin_code}
+        WHERE admin_info.admin_code = #{admin_code}
         AND admin_info.password = #{password}
 
         AND ADMIN_ROLE.ADMIN_ID = admin_info.id

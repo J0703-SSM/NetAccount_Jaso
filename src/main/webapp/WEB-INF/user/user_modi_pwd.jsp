@@ -19,7 +19,7 @@
                 $("#msg").hide();
             }
 
-            if ($("#oldpwd").val() != ${applicationScope.loginAdmin.password}) {
+            if ($("#oldpwd").val() !== ${applicationScope.loginAdmin.password}) {
                 $("#old_msg").html("*旧密码错误!");
                 return false;
             } else {

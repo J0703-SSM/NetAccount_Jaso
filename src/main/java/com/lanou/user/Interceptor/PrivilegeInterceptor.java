@@ -19,15 +19,15 @@ public class PrivilegeInterceptor implements HandlerInterceptor {
         Map<String,String> loginPrivi = (Map<String, String>) request.getServletContext().getAttribute("loginPrivi");
 
         //角色
-        if (uri.indexOf("role") != -1 &&  loginPrivi.get("1") == null){
+        if (uri.indexOf("role_") != -1 &&  loginPrivi.get("1") == null){
             request.getRequestDispatcher("/WEB-INF/nopower.jsp").forward(request,response);
         }
         //管理员
-        if (uri.indexOf("admin") != -1 &&  loginPrivi.get("2") == null){
+        if (uri.indexOf("admin_") != -1 &&  loginPrivi.get("2") == null){
             request.getRequestDispatcher("/WEB-INF/nopower.jsp").forward(request,response);
         }
         //资费
-        if (uri.indexOf("fee") != -1 &&  loginPrivi.get("3") == null){
+        if (uri.indexOf("fee_") != -1 &&  loginPrivi.get("3") == null){
             request.getRequestDispatcher("/WEB-INF/nopower.jsp").forward(request,response);
         }
 //未开放
@@ -43,6 +43,8 @@ public class PrivilegeInterceptor implements HandlerInterceptor {
         if (uri.indexOf("service") != -1 ){
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request,response);
         }
+
+
 
         return true;
     }

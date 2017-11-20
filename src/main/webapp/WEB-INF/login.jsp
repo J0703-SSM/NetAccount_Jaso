@@ -19,7 +19,7 @@
             <tr>
                 <td class="login_info">账号：</td>
                 <td colspan="2"><input name="admin_code" type="text" class="width150"
-                                       placeholder="用户名 或 邮箱"/></td>
+                                       placeholder="用户名"/></td>
                 <td class="login_error_info">
                     <span class="required">${nameError.defaultMessage}</span>
                 </td>
