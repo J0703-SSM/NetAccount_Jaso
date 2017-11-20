@@ -1,6 +1,7 @@
 ﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@page isELIgnored="false" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -37,9 +38,29 @@
         }
         //重置密码
         function resetPwd() {
-            alert("请至少选择一条数据！");
-            //document.getElementById("operate_result_info").style.display = "block";
+            if ($("input:checkbox:checked").length == 0) {
+                alert("请至少选择一条数据！");
+            }else {
+                $("input:checkbox:checked").each(function () {
+
+                    $.ajax({
+                        url: "/user_admin/resetPwd",
+                        type: 'get',
+                        data: {
+                            id: $(this).val()
+                        },
+                        success: function () {
+                        }
+
+                    });
+                    $("#msg").html("重置密码成功!");
+                    document.getElementById("operate_result_info").style.display = "block";
+                });
+            }
+
+
         }
+
         //删除
         function deleteAdmin(id) {
             var r = window.confirm("确定要删除此管理员吗？");
@@ -56,6 +77,7 @@
 
             document.getElementById("operate_result_info").style.display = "block";
         }
+
         //全选
         function selectAdmins(inputObj) {
             var inputArray = document.getElementById("datalist").getElementsByTagName("input");
@@ -78,13 +100,27 @@
 <div id="navi">
     <ul id="menu">
         <li><a href="/index" class="index_off"></a></li>
-        <li><a href="/user_role/findAllRole" class="role_off"></a></li>
-        <li><a href="/admin_list" class="admin_on"></a></li>
-        <li><a href="/fee_list" class="fee_off"></a></li>
-        <li><a href="/account_list" class="account_off"></a></li>
-        <li><a href="/service_list" class="service_off"></a></li>
-        <li><a href="/bill_list" class="bill_off"></a></li>
-        <li><a href="/report_list" class="report_off"></a></li>
+        <c:if test="${loginPrivi['1'] != null}">
+            <li><a href="/user_role/findAllRole" class="role_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['2'] != null}">
+            <li><a href="/admin_list" class="admin_on"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['3'] != null}">
+            <li><a href="/fee_list" class="fee_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['4'] != null}">
+            <li><a href="/account_list" class="account_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['5'] != null}">
+            <li><a href="/service_list" class="service_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['6'] != null}">
+            <li><a href="/bill_list" class="bill_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['7'] != null}">
+            <li><a href="/report_list" class="report_off"></a></li>
+        </c:if>
         <li><a href="/user_info" class="information_off"></a></li>
         <li><a href="/user_modi_pwd" class="password_off"></a></li>
     </ul>
@@ -95,21 +131,22 @@
     <form action="" method="">
         <!--查询-->
         <div class="search_add">
-            <div>
-                模块：
-                <select id="selModules" class="select_search">
-                    <option>全部</option>
-                </select>
-            </div>
-            <div>角色：<input type="text" value="" class="text_search width200"/></div>
-            <div><input type="button" value="搜索" class="btn_search"/></div>
+            <%--<div>--%>
+                <%--模块：--%>
+                <%--<select id="selModules" class="select_search">--%>
+                    <%--<option>全部</option>--%>
+                <%--</select>--%>
+            <%--</div>--%>
+            <%--<div>角色：<input type="text" value="" class="text_search width200"/></div>--%>
+            <%--<div><input type="button" value="搜索" class="btn_search"/></div>--%>
             <input type="button" value="密码重置" class="btn_add" onclick="resetPwd();"/>
             <input type="button" value="增加" class="btn_add" onclick="location.href='/user_admin/findAllRole';"/>
         </div>
         <!--删除和密码重置的操作提示-->
         <div id="operate_result_info" class="operate_fail">
-            <img src="../../resources/images/close.png" onclick="this.parentNode.style.display='none';window.location.reload();"/>
-            <span>删除成功!</span><!--密码重置失败！数据并发错误。-->
+            <img src="../../resources/images/close.png"
+                 onclick="this.parentNode.style.display='none';window.location.reload();"/>
+            <span id="msg">删除成功!</span><!--密码重置失败！数据并发错误。-->
         </div>
         <!--数据区域：用表格展示数据-->
         <div id="data">
@@ -132,7 +169,7 @@
 
                 <c:forEach items="${applicationScope.adminList}" var="admin">
                     <tr>
-                        <td><input type="checkbox"/></td>
+                        <td><input type="checkbox" value="${admin.id}"/></td>
                         <td>${admin.id}</td>
                         <td>${admin.name}</td>
                         <td>${admin.admin_code}</td>
@@ -147,13 +184,16 @@
                                 </c:forEach>
                             </a>
                             <!--浮动的详细信息-->
-                            <div class="detail_info">
-                                <c:forEach items="${admin.roleList}" var="role">${role.name}&nbsp;&nbsp;</c:forEach>
-                            </div>
+                            <c:if test="${fn:length(admin.roleList) gt 1}">
+                                <div class="detail_info">
+                                    <c:forEach items="${admin.roleList}" var="role">${role.name}&nbsp;&nbsp;</c:forEach>
+                                </div>
+                            </c:if>
+
                         </td>
                         <td class="td_modi">
-                            <input type="button" value="修改" class="btn_modify"
-                                   onclick="location.href='#';"/>
+                            <%--<input type="button" value="修改" class="btn_modify"--%>
+                                   <%--onclick="location.href='#';"/>--%>
                             <input type="button" value="删除" class="btn_delete"
                                    onclick="deleteAdmin(${admin.id});"/>
                         </td>

@@ -16,7 +16,7 @@ public interface CostMapper {
 
     void operate(Cost cost);
 
-    void delete(int cost_id);
+    int delete(int cost_id);
 
     void addCost(Cost cost);
 

@@ -1,4 +1,5 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@page isELIgnored="false" %>
 <html>
 <head>
@@ -10,17 +11,48 @@
     <script language="javascript" type="text/javascript">
 
 
-
         //保存结果的提示
         function showResult() {
 
+//            if ($("input[type='radio']").eq(0).is(':checked')){
+//                if ($("#base_duration").val() == '') {
+//                    $("#base_duration").val(0);
+//                }
+//
+//                if ($("#unit_cost").val() == '') {
+//                    $("#unit_cost").val(0);
+//                }
+//            }
+//
+//            if ($("input[type='radio']").eq(2).is(':checked');){
+//
+//                if ($("#base_duration").val() == '') {
+//                    $("#base_duration").val(0);
+//                }
+//                if ($("#base_cost").val() == '') {
+//                    $("#base_cost").val(0);
+//                }
+//
+//            }
+
+            if ($("#unit_cost").val() == '') {
+                $("#unit_cost").val(0);
+            }
+
+            if ($("#base_duration").val() == '') {
+                $("#base_duration").val(0);
+            }
+            if ($("#base_cost").val() == '') {
+                $("#base_cost").val(0);
+            }
+
+
             //表单验证
 
-            if ($("#name").val() == '') {
-                $("#name_msg").html("50长度的字母、数字、汉字和下划线的组合");
+            if (!isString($("#name").val()) || $("#name").val() == '') {
+                $("#name_msg").html("*字母、数字、汉字和下划线的组合");
                 return false;
             }
-            $("#name_msg").html("√")
             <%--去重复--%>
             $.ajax({
                 url: "/cost/verifyName",
@@ -29,48 +61,59 @@
                     name: $("#name").val()
                 }, success: function (data) {
                     if (data == 0) {
-                        $("#name_msg").html("保存失败，资费名称重复！");
+                        $("#name_msg").html("*资费名称重复");//资费名称重复
                         return false;
                     }
+                    $("#name_msg").html("√");
+
+                    if (!isInteger($("#base_duration").val()) || $("#base_duration").val() == '') {
+                        $("#base_duration_msg").html("*1~600之间整数");
+                        return false;
+                    }
+                    $("#base_duration_msg").html("√");
+
+                    if (!isCount($("#base_cost").val()) || $("#base_cost").val() == '') {
+                        $("#base_cost_msg").html("*0-99999.99之间的数值");
+                        return false;
+                    }
+                    $("#base_cost_msg").html("√");
+
+                    if (!isCount($("#unit_cost").val()) || $("#unit_cost").val() == '') {
+                        $("#unit_cost_msg").html("*0-99999.99之间的数值");
+                        return false;
+                    }
+                    $("#unit_cost_msg").html("√");
+
+                    if (!isStr($("#descr").val()) || $("#descr").val() == '') {
+                        $("#descr_msg").html("*字母、数字、汉字和下划线的组合");
+                        return false;
+                    }
+                    $("#descr_msg").html("√");
+                    //提交表单
+
+                    $("#add").submit();
                 }
             });
 
-//            if ($("#base_duration").val() == '' && !$("#monthly").attr("checked") && !$("#timeBased").attr("checked")) {
-//                $("#base_duration_msg").html("1~600之间整数");
-//                return false;
-//            }
-//            $("#base_duration_msg").html("√")
-//
-//
-//            if ($("#base_cost").val() == '' && !$("#timeBased").attr("checked")) {
-//                $("#base_cost_msg").html("0-99999.99之间的数值");
-//                return false;
-//            }
-//            $("#base_cost_msg").html("√")
-//
-//
-//            if ($("#unit_cost").val() == '' && !$("#monthly").attr("checked")) {
-//                $("#unit_cost_msg").html("0-99999.99之间的数值");
-//                return false;
-//            }
-//            $("#unit_cost_msg").html("√")
 
+        }
 
-            if ($("#descr").val() == '') {
-                $("#descr_msg").html("100长度的字母、数字、汉字和下划线的组合");
-                return false;
-            }
-            $("#descr_msg").html("√")
+        function isString(name) {
+            reg = /^[a-z,A-Z,0-9]+$/;
+            return reg.test(name);
+        }
 
-
-            showResultDiv(true);
-            if ($("#base_duration").val() == ''){$("#base_duration").val(0);}
-            if ($("#base_cost").val() == ''){ $("#base_cost").val(0);}
-            if ($("#unit_cost").val() == ''){$("#unit_cost").val(0);}
-
-            window.setTimeout("showResultDiv(true);", 3000);
-            $("#f").submit();
-
+        function isInteger(name) {
+            reg = /^([0-6]\d{0,2}|600)$/;
+            return reg.test(name);
+        }
+        function isCount(name) {
+            reg = /^(\d{1,5})(\.\d{1,2})?$/;
+            return reg.test(name);
+        }
+        function isStr(name) {
+            reg = /^\S{1,100}$/;
+            return reg.test(name);
         }
 
         function showResultDiv(flag) {
@@ -131,13 +174,27 @@
 <div id="navi">
     <ul id="menu">
         <li><a href="/index" class="index_off"></a></li>
-        <li><a href="/user_role/findAllRole" class="role_off"></a></li>
-        <li><a href="/admin_list" class="admin_off"></a></li>
-        <li><a href="/fee_list" class="fee_on"></a></li>
-        <li><a href="/account_list" class="account_off"></a></li>
-        <li><a href="/service_list" class="service_off"></a></li>
-        <li><a href="/bill_list" class="bill_off"></a></li>
-        <li><a href="/report_list" class="report_off"></a></li>
+        <c:if test="${loginPrivi['1'] != null}">
+            <li><a href="/user_role/findAllRole" class="role_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['2'] != null}">
+            <li><a href="/admin_list" class="admin_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['3'] != null}">
+            <li><a href="/fee_list" class="fee_on"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['4'] != null}">
+            <li><a href="/account_list" class="account_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['5'] != null}">
+            <li><a href="/service_list" class="service_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['6'] != null}">
+            <li><a href="/bill_list" class="bill_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['7'] != null}">
+            <li><a href="/report_list" class="report_off"></a></li>
+        </c:if>
         <li><a href="/user_info" class="information_off"></a></li>
         <li><a href="/user_modi_pwd" class="password_off"></a></li>
     </ul>
@@ -145,15 +202,14 @@
 <!--导航区域结束-->
 <!--主要区域开始-->
 <div id="main">
-    <div id="save_result_info" class="save_success">添加成功!</div>
+    <div id="save_result_info" class="save_fail">添加失败!资费名称已存在!</div>
 
     <%--表单--%>
-    <form action="/cost/addCost" id="f" method="post" class="main_form">
+    <form action="/cost/addCost" id="add" method="post" class="main_form">
         <div class="text_info clearfix"><span>资费名称：</span></div>
         <div class="input_info">
             <input id="name" name="name" type="text" class="width300"/>
-            <span class="required">*</span>
-            <div id="name_msg" class="validate_msg_short"></div>
+            <span id="name_msg" class="required"></>
         </div>
         <div class="text_info clearfix"><span>资费类型：</span></div>
         <div class="input_info fee_type">
@@ -168,27 +224,24 @@
         <div class="input_info">
             <input id="base_duration" name="base_duration" type="text" class="width100"/>
             <span class="info">小时</span>
-            <span class="required">*</span>
-            <div id="base_duration_msg" class="validate_msg_medium"></div>
+            <span id="base_duration_msg" class="required"></span>
         </div>
         <div class="text_info clearfix"><span>基本费用：</span></div>
         <div class="input_info">
             <input id="base_cost" name="base_cost" type="text" class="width100"/>
             <span class="info">元</span>
-            <span class="required">*</span>
-            <div id="base_cost_msg" class="validate_msg_medium"></div>
+            <span id="base_cost_msg" class="required"></span>
         </div>
         <div class="text_info clearfix"><span>单位费用：</span></div>
         <div class="input_info">
             <input id="unit_cost" name="unit_cost" type="text" class="width100"/>
             <span class="info">元/小时</span>
-            <span class="required">*</span>
-            <div id="unit_cost_msg" class="validate_msg_medium"></div>
+            <span id="unit_cost_msg" class="required"></span>
         </div>
         <div class="text_info clearfix"><span>资费说明：</span></div>
         <div class="input_info_high">
             <textarea id="descr" name="descr" class="width300 height70"></textarea>
-            <div id="descr_msg" class="validate_msg_short"></div>
+            <span id="descr_msg" class="required"></span>
         </div>
         <div class="button_info clearfix">
             <input type="button" value="保存" class="btn_save" onclick="showResult()"/>

@@ -13,7 +13,8 @@
 
 
             function deleteRole(data) {
-                var r = window.confirm("确定要删除此角色吗？");
+                $("#msg").html("执行删除操作后, 不可恢复!");
+                document.getElementById("operate_result_info").style.display = "block";
                 //删除
                 //如果此角色有人,不能删
                 $.ajax({
@@ -24,7 +25,8 @@
                     },
                     success: function (result) {
                         if (result != 0){
-                            var q = window.confirm("此角色不能删除!");
+                            $("#msg").html("此角色不可删除!");
+                            document.getElementById("operate_result_info").style.display = "block";
                             return false;
                         }else {
                             $.ajax({
@@ -35,7 +37,7 @@
                                 },success: function () {}
                             });
                             document.getElementById("operate_result_info").style.display = "block";
-                            window.location.reload();
+
                         }
                     }
                 });
@@ -55,13 +57,27 @@
         <div id="navi">                        
             <ul id="menu">
                 <li><a href="/index" class="index_off"></a></li>
-                <li><a href="/user_role/findAllRole" class="role_on"></a></li>
-                <li><a href="/admin_list" class="admin_off"></a></li>
-                <li><a href="/fee_list" class="fee_off"></a></li>
-                <li><a href="/account_list" class="account_off"></a></li>
-                <li><a href="/service_list" class="service_off"></a></li>
-                <li><a href="/bill_list" class="bill_off"></a></li>
-                <li><a href="/report_list" class="report_off"></a></li>
+                <c:if test="${loginPrivi['1'] != null}">
+                    <li><a href="/user_role/findAllRole" class="role_on"></a></li>
+                </c:if>
+                <c:if test="${loginPrivi['2'] != null}">
+                    <li><a href="/admin_list" class="admin_off"></a></li>
+                </c:if>
+                <c:if test="${loginPrivi['3'] != null}">
+                    <li><a href="/fee_list" class="fee_off"></a></li>
+                </c:if>
+                <c:if test="${loginPrivi['4'] != null}">
+                    <li><a href="/account_list" class="account_off"></a></li>
+                </c:if>
+                <c:if test="${loginPrivi['5'] != null}">
+                    <li><a href="/service_list" class="service_off"></a></li>
+                </c:if>
+                <c:if test="${loginPrivi['6'] != null}">
+                    <li><a href="/bill_list" class="bill_off"></a></li>
+                </c:if>
+                <c:if test="${loginPrivi['7'] != null}">
+                    <li><a href="/report_list" class="report_off"></a></li>
+                </c:if>
                 <li><a href="/user_info" class="information_off"></a></li>
                 <li><a href="/user_modi_pwd" class="password_off"></a></li>
             </ul>            
@@ -69,15 +85,15 @@
         <!--导航区域结束-->
         <!--主要区域开始-->
         <div id="main">
-            <form action="" method="">
+            <form >
                 <!--添加-->
                 <div class="search_add">
                     <input type="button" value="增加" class="btn_add" onclick="location.href='/role_add';" />
                 </div>  
                 <!--删除的操作提示-->
-                <div id="operate_result_info" class="operate_success">
-                    <img src="../../resources/images/close.png" onclick="this.parentNode.style.display='none';" />
-                    删除成功！
+                <div id="operate_result_info" class="operate_fail">
+                    <img src="../../resources/images/close.png" onclick="this.parentNode.style.display='none'; window.location.reload();" />
+                    <span id="msg">删除成功！</span>
                 </div> <!--删除错误！该角色被使用，不能删除。-->
 
 

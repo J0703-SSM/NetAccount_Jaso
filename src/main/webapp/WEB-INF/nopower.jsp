@@ -20,7 +20,7 @@
                 }
                 else {
                     window.clearInterval(timer);
-                    location.href = "../index.jsp";
+                    location.href = "/index";
                 }
             }
 
@@ -28,12 +28,18 @@
             function resetTimer() {
                 if (timer != null && timer != undefined) {
                     window.clearInterval(timer);
-                    location.href = "../index.jsp";
+                    location.href = "/index";
                 }
             }
         </script> 
     </head>
     <body class="error_power_page" onload="startTimes();">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
         <h1 id="error">
 	        您无权访问此页面，&nbsp;<span id="secondes">5</span>&nbsp;秒后将自动跳转，立即跳转请点击&nbsp;
             <a class="index.html" href="javascript:resetTimer();">返回</a>

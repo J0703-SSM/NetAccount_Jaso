@@ -10,52 +10,28 @@
     <script src="/resources/js/jquery-3.2.1.js"></script>
     <script language="javascript" type="text/javascript">
 
-        //页面加载,查询所有条目
-        //        $.ajax({
-        //            url: "/cost/findAll?pc=1",
-        //            type: "get",
-        //            success: function (data) {
-        //            }
-        //
-        //        });
-
-
         //排序按钮的点击事件
         function sort(btnObj, column) {
             if (btnObj.className == "sort_desc") {
                 //升序
                 btnObj.className = "sort_asc";
                 location.href = "/cost/findAll?pc=1&sort=asc&column=" + column + "";
-//                $.post(
-//                        "/cost/order",
-//                        {
-//                            sort: "asc",
-//                            column: column
-//                        }
-//                )
             }
             else {
                 //降序
                 btnObj.className = "sort_desc";
                 location.href = "/cost/findAll?pc=1&sort=desc&column=" + column + "";
-//                $.post(
-//                        "/cost/order",
-//                        {
-//                            sort: "desc",
-//                            column: column
-//                        }
-//                )
             }
         }
 
         //启用
         function startFee(id) {
-            var r = window.confirm("确定要启用此资费吗？资费启用后将不能修改和删除。");
-            $.post({
+            $.ajax({
                 url: "/cost/operate",
+                type:"get",
                 data: {
                     cost_id: id
-                }
+                },success: function (){}
             });
             document.getElementById("operate_result_info").style.display = "block";
         }
@@ -63,12 +39,14 @@
         function deleteFee(id) {
             var q = window.confirm("确定要删除此资费吗？");
 
-            $.post({
+            $.ajax({
                 url: "/cost/delete",
+                type:"get",
                 data: {
                     cost_id: id
-                }
+                },success: function (){}
             });
+            $("#msg").html("删除操作成功!");
             document.getElementById("operate_result_info").style.display = "block";
         }
     </script>
@@ -84,13 +62,27 @@
 <div id="navi">
     <ul id="menu">
         <li><a href="/index" class="index_off"></a></li>
-        <li><a href="/user_role/findAllRole" class="role_off"></a></li>
-        <li><a href="/admin_list" class="admin_off"></a></li>
-        <li><a href="/fee_list" class="fee_on"></a></li>
-        <li><a href="/account_list" class="account_off"></a></li>
-        <li><a href="/service_list" class="service_off"></a></li>
-        <li><a href="/bill_list" class="bill_off"></a></li>
-        <li><a href="/report_list" class="report_off"></a></li>
+        <c:if test="${loginPrivi['1'] != null}">
+            <li><a href="/user_role/findAllRole" class="role_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['2'] != null}">
+            <li><a href="/admin_list" class="admin_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['3'] != null}">
+            <li><a href="/fee_list" class="fee_on"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['4'] != null}">
+            <li><a href="/account_list" class="account_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['5'] != null}">
+            <li><a href="/service_list" class="service_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['6'] != null}">
+            <li><a href="/bill_list" class="bill_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['7'] != null}">
+            <li><a href="/report_list" class="report_off"></a></li>
+        </c:if>
         <li><a href="/user_info" class="information_off"></a></li>
         <li><a href="/user_modi_pwd" class="password_off"></a></li>
     </ul>
@@ -98,8 +90,7 @@
 <!--导航区域结束-->
 <!--主要区域开始-->
 <div id="main">
-    <form action="" method="">
-
+    <form >
 
         <!--排序-->
         <div class="search_add">
@@ -136,12 +127,11 @@
                    onclick="location.href='/fee_add';"/>
         </div>
 
-
         <!--启用操作的操作提示-->
         <div id="operate_result_info" class="operate_success">
             <img src="../../resources/images/close.png"
                  onclick="this.parentNode.style.display='none';window.location.reload();"/>
-            操作成功！
+            <span id="msg">启用操作成功！</span>
         </div>
         <!--数据区域：用表格展示数据-->
         <div id="data">

@@ -28,4 +28,11 @@ public interface AdminService {
     void addRoleForAdmin(Admin_Role admin_role);
 
     void deleteAdmin(int id);
+
+    void resetPwd(int id);
+
+    Admin findByEmail(String email);
+
+    void updateByEmail(String email);
+
 }

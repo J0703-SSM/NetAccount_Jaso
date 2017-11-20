@@ -1,8 +1,11 @@
 package com.lanou.user.controller;
 
 import com.lanou.base.util.VerifyCode;
+import com.lanou.mail.Mail;
+import com.lanou.mail.MailUtils;
 import com.lanou.user.domain.Admin;
 import com.lanou.user.domain.Admin_Role;
+import com.lanou.user.domain.Privilege;
 import com.lanou.user.domain.Role;
 import com.lanou.user.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,7 +27,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Admin  控制器
@@ -88,9 +96,22 @@ public class AdminController {
         /*验证用户*/
             Admin loginAdmin = adminService.verifyAdmin(admin);
 
-            request.getServletContext().setAttribute("loginAdmin", loginAdmin);//将登陆信息存入域
+
             if (loginAdmin != null) {
                 System.out.println("登录用户 : " + loginAdmin);
+                request.getServletContext().setAttribute("loginAdmin", loginAdmin);//将登陆信息存入域
+            /*将权限存入域*/
+                Map<String,String> map = new HashMap();
+                for (Role role : loginAdmin.getRoleList()) {
+                    for (Privilege privilege : role.getPrivilegeList()) {
+                        map.put(privilege.getId()+"",privilege.getName());
+                    }
+                }
+                for (String s : map.keySet()) {
+                    System.out.println("privi : "+s);
+                }
+                request.getServletContext().setAttribute("loginPrivi",map);
+            /*----------*/
                 return "index";
             } else {
                 model.addAttribute("error", "*账号或密码错误");
@@ -149,12 +170,11 @@ public class AdminController {
      * 查询所有admin
      */
     @RequestMapping("/findAllAdmin")
-    public String findAllAdmin(HttpServletRequest request){
-        
-        List<Admin> adminList =adminService.findAll();
+    public String findAllAdmin(HttpServletRequest request) {
 
-        System.out.println(adminList);
-        request.getServletContext().setAttribute("adminList",adminList);
+        List<Admin> adminList = adminService.findAll();
+
+        request.getServletContext().setAttribute("adminList", adminList);
         return "admin/admin_list";
     }
 
@@ -162,9 +182,9 @@ public class AdminController {
      * 查询所有角色
      */
     @RequestMapping("/findAllRole")
-    public String findAllRole(Model model){
+    public String findAllRole(Model model) {
         List<Role> roleList = adminService.findAllRole();
-        model.addAttribute("roleList",roleList);
+        model.addAttribute("roleList", roleList);
         return "admin/admin_add";
     }
 
@@ -172,7 +192,7 @@ public class AdminController {
      * 添加管理员
      */
     @RequestMapping("/addAdmin")
-    public String addAdmin(int[] role,Admin admin,HttpServletRequest request){
+    public String addAdmin(int[] role, Admin admin, HttpServletRequest request) {
         //登录名唯一
         Admin admin1 = adminService.findByAdminCode(admin.getAdmin_code());
         if (admin1 == null) {
@@ -185,13 +205,16 @@ public class AdminController {
             //回查管理员id
             int newId = adminService.findByAdminCode(admin.getAdmin_code()).getId();
             //根据管理员id,添加角色
-            for (int i : role) {
-                Admin_Role admin_role = new Admin_Role(newId, i);
-                adminService.addRoleForAdmin(admin_role);
+            if (role.length != 0) {
+                for (int i : role) {
+                    Admin_Role admin_role = new Admin_Role(newId, i);
+                    adminService.addRoleForAdmin(admin_role);
+                }
             }
-            return "forward:findAllAdmin";
+            return "redirect:findAllAdmin";
         }
-        return "0";
+
+        return "forward:findAllRole";
 
     }
 
@@ -199,8 +222,58 @@ public class AdminController {
      * 删除
      */
     @RequestMapping("/deleteAdmin")
-    public void deleteAdmin(Admin admin){
+    public void deleteAdmin(Admin admin) {
         adminService.deleteAdmin(admin.getId());
+    }
+
+    /**
+     * 重置密码
+     */
+    @RequestMapping("/resetPwd")
+    public void resetPwd(int id) {
+        adminService.resetPwd(id);
+    }
+
+    /**
+     * 忘记密码
+     * 验证邮箱
+     */
+    @ResponseBody
+    @RequestMapping("/verifyEmail")
+    public int verifyEmail(String email){
+        Admin admin = adminService.findByEmail(email);
+        if (admin != null){
+            return 1;
+        }
+        return 0;
+    }
+    /**
+     * 忘记密码
+     * 发邮件&初始密码
+     */
+    @ResponseBody
+    @RequestMapping("/sendEmail")
+    public int sendEmail(String email){
+        System.out.println("发送邮件到 :"+email);
+        try {
+        /*   1>. 得到 session   */
+            Session session = MailUtils.createSession("smtp.163.com","xinrugao@163.com", "why1993521");
+        /*   2>.创建邮件对象   */
+            Mail mail = new Mail("xinrugao@163.com",email,"FROM.Jaso.wei",
+                    "<h1>NetAccount</h1><hr><br><h2>您的新的初始密码 : 000000</h2><h4>*为了账户安全,建议您尽快修改初始密码.</h4>");
+        /*  3>.发送    */
+            MailUtils.send(session,mail);
+
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //修改数据库
+        adminService.updateByEmail(email);
+        System.out.println("send success !");
+        return 1;
     }
 
 

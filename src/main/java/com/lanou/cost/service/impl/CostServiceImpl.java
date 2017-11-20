@@ -48,8 +48,8 @@ public class CostServiceImpl implements CostService {
      * 删除
      * @param cost_id
      */
-    public void delete(int cost_id) {
-        costMapper.delete(cost_id);
+    public int delete(int cost_id) {
+        return costMapper.delete(cost_id);
     }
 
     /**

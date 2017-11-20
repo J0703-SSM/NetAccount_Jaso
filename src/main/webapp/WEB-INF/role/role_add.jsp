@@ -7,6 +7,10 @@
     <title></title>
     <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global_color.css"/>
+    <%--w2ui--%>
+    <link type="text/css" rel="stylesheet" media="all" href="/resources/w2ui-1.5.rc1/w2ui-1.5.rc1.css"/>
+    <script src="/resources/w2ui-1.5.rc1/w2ui-1.5.rc1.js"></script>
+    <%--jq--%>
     <script src="/resources/js/jquery-3.2.1.js"></script>
 
     <script language="javascript" type="text/javascript">
@@ -31,17 +35,17 @@
         function showResult() {
             //表单判空
             if ($("#role_name").val() == "") {
-                $("#name_msg").html("*请填写!");
+                $("#name_msg").html("*请填写此项!");
                 return false;
             } else {
-                $("#name_msg").html("")
+                $("#name_msg").html("√")
             }
 
             if (isString($("#role_name").val())) {
                 $("#name_msg").html("*请填写字符格式名称!");
                 return false;
             } else {
-                $("#name_msg").html("")
+                $("#name_msg").html("√")
             }
 
 
@@ -72,8 +76,12 @@
                 },
                 success: function (data) {
                     if (data == 0){
-                        var q = window.confirm("角色名称存在,添加失败!");
+                        $("#name_msg").html("×");
+                        $("#save_result_info").html("角色名称存在,换个名字试试吧");
+                        showResultDiv(false);
+                        window.setTimeout("showResultDiv(false);", 3000);
                     }else {
+                        showResultDiv(false);
                         window.setTimeout("showResultDiv(false);", 3000);
                     }
                 }
@@ -81,6 +89,7 @@
 
 
         }
+
         function showResultDiv(flag) {
             var divResult = document.getElementById("save_result_info");
             if (!flag)
@@ -89,7 +98,7 @@
                 divResult.style.display = "none";
         }
         function isString(name) {
-            reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+            reg = /^[a-z,A-Z]+$/;
             return reg.test(name);
         }
     </script>
@@ -105,13 +114,27 @@
 <div id="navi">
     <ul id="menu">
         <li><a href="/index" class="index_off"></a></li>
-        <li><a href="/user_role/findAllRole" class="role_on"></a></li>
-        <li><a href="/admin_list" class="admin_off"></a></li>
-        <li><a href="/fee_list" class="fee_off"></a></li>
-        <li><a href="/account_list" class="account_off"></a></li>
-        <li><a href="/service_list" class="service_off"></a></li>
-        <li><a href="/bill_list" class="bill_off"></a></li>
-        <li><a href="/report_list" class="report_off"></a></li>
+        <c:if test="${loginPrivi['1'] != null}">
+            <li><a href="/user_role/findAllRole" class="role_on"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['2'] != null}">
+            <li><a href="/admin_list" class="admin_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['3'] != null}">
+            <li><a href="/fee_list" class="fee_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['4'] != null}">
+            <li><a href="/account_list" class="account_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['5'] != null}">
+            <li><a href="/service_list" class="service_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['6'] != null}">
+            <li><a href="/bill_list" class="bill_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['7'] != null}">
+            <li><a href="/report_list" class="report_off"></a></li>
+        </c:if>
         <li><a href="/user_info" class="information_off"></a></li>
         <li><a href="/user_modi_pwd" class="password_off"></a></li>
     </ul>
@@ -127,18 +150,15 @@
         <div class="text_info clearfix"><span>角色名称：</span></div>
         <div class="input_info">
             <input id="role_name" type="text" class="width200"/>
-            <span class="required">*</span>
-            <div id="name_msg" class="validate_msg_medium"></div>
+            <span id="name_msg" class="required"></span>
         </div>
         <div class="text_info clearfix"><span>设置权限：</span></div>
         <div class="input_info_high">
             <div class="input_info_scroll">
                 <ul id="privi">
-
                 </ul>
             </div>
-            <span class="required">*</span>
-            <div id="sel_msg" class="validate_msg_tiny"></div>
+            <span id="sel_msg" class="required"></span>
         </div>
         <div class="button_info clearfix">
             <input type="button" value="保存" class="btn_save" onclick="showResult();"/>

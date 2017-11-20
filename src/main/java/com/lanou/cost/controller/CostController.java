@@ -50,7 +50,6 @@ public class CostController {
 //排序
         String  sort= request.getParameter("sort");
         String column = request.getParameter("column");
-        System.out.println(column +" % "+ sort);
         //
         request.setAttribute("sort",sort);
         request.setAttribute("column",column);
@@ -68,9 +67,6 @@ public class CostController {
 
         //查询
         List<Cost> costList = costService.findAll(pageExt);
-        for (Cost cost : costList) {
-            System.out.println("&&& : "+cost);
-        }
         PageBean<Cost> pb = new PageBean<Cost>();
         //+ bean
         pb.setBeanList(costList);
@@ -107,21 +103,26 @@ public class CostController {
      * 启用
      */
     @RequestMapping("/operate")
-    public void operate(Cost cost){
+    public String operate(Cost cost){
         Date date = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
         df.format(date);// new Date()为获取当前系统时间
         cost.setStartime(date);
         costService.operate(cost);
+        return "forward:findAll";
     }
 
     /**
      * 删除
      */
     @RequestMapping("/delete")
-    public void delete(Cost cost){
+    public String delete(Cost cost){
 
-        costService.delete(cost.getCost_id());
+        int count = costService.delete(cost.getCost_id());
+
+        System.out.println(count);
+
+        return "forward:findAll";
     }
 
     /**
@@ -131,7 +132,10 @@ public class CostController {
     @RequestMapping("/verifyName")
     public int verifyName(Cost cost){
         Cost cost1 = costService.verifyName(cost.getName());
-        if (cost1 == null){
+        int id = cost.getCost_id();
+
+        System.out.println(id);
+        if (cost1 == null || id == cost1.getCost_id()){
             return 1;
         }
         return 0;
@@ -148,7 +152,7 @@ public class CostController {
         cost.setStatus("0");//设置初始状态(未开启)
 
         costService.addCost(cost);
-        return "forward:findAll";
+        return "redirect:findAll";
     }
     /**
      * 查询(id)

@@ -12,15 +12,16 @@
         function showResult() {
             //判断输入格式
             if ($("#name").val() == "" || $("#tel").val() == "" || $("#email").val() == "") {
-                $("#msg").html("*请填写完整!");
+                $("#msg").show();
                 return false;
-            } else {
-                $("#msg").html("");
+            }else {
+                $("#msg").hide();
             }
 
             //姓名
             if (isString($("#name").val())) {
-                $("#name_msg").html("*请输入中文姓名!");
+                $("#name_msg").html("*只允许输入字符!");
+
                 return false;
             } else {
                 $("#name_msg").html("√");
@@ -79,9 +80,10 @@
         }
 
         function isString(name) {
-            reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+            reg = /^[a-z,A-Z]+$/;
             return reg.test(name);
         }
+
 
     </script>
 </head>
@@ -96,13 +98,27 @@
 <div id="navi">
     <ul id="menu">
         <li><a href="/index" class="index_off"></a></li>
-        <li><a href="/user_role/findAllRole" class="role_off"></a></li>
-        <li><a href="/admin_list" class="admin_off"></a></li>
-        <li><a href="/fee_list" class="fee_off"></a></li>
-        <li><a href="/account_list" class="account_off"></a></li>
-        <li><a href="/service_list" class="service_off"></a></li>
-        <li><a href="/bill_list" class="bill_off"></a></li>
-        <li><a href="/report_list" class="report_off"></a></li>
+        <c:if test="${loginPrivi['1'] != null}">
+            <li><a href="/user_role/findAllRole" class="role_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['2'] != null}">
+            <li><a href="/admin_list" class="admin_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['3'] != null}">
+            <li><a href="/fee_list" class="fee_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['4'] != null}">
+            <li><a href="/account_list" class="account_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['5'] != null}">
+            <li><a href="/service_list" class="service_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['6'] != null}">
+            <li><a href="/bill_list" class="bill_off"></a></li>
+        </c:if>
+        <c:if test="${loginPrivi['7'] != null}">
+            <li><a href="/report_list" class="report_off"></a></li>
+        </c:if>
         <li><a href="/user_info" class="information_on"></a></li>
         <li><a href="/user_modi_pwd" class="password_off"></a></li>
     </ul>
@@ -130,21 +146,20 @@
         <div class="text_info clearfix"><span>姓名：</span></div>
         <div class="input_info">
             <input id="name" name="name" type="text" value="${applicationScope.loginAdmin.name}"/>
-            <span class="required">*</span>
-            <div id="name_msg" class="validate_msg_long "></div>
+            <span id="name_msg" class="required"></span>
         </div>
 
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
             <input id="tel" name="telephone" type="text" class="width200"
                    value="${applicationScope.loginAdmin.telephone}"/>
-            <div id="tel_msg" class="validate_msg_medium "></div>
+            <span id="tel_msg" class="required"></span>
         </div>
 
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
             <input id="email" name="email" type="text" class="width200" value="${applicationScope.loginAdmin.email}"/>
-            <div id="email_msg" class="validate_msg_medium "></div>
+            <span id="email_msg" class="required"></span>
         </div>
 
         <div class="text_info clearfix"><span>创建时间：</span></div>
@@ -157,7 +172,8 @@
             <input type="button" value="保存" class="btn_save" onclick="showResult();"/>
             <input type="button" value="取消" class="btn_save" onclick="location.href='/index'"/>
             <br>
-            <div id="msg" class="validate_msg_medium "></div>
+            <br>
+            <div id="msg" class="validate_msg_short error_msg" style="display: none">*请将信息填写完整! 否则无法确定此操作!</div>
         </div>
     </form>
 </div>

@@ -103,7 +103,6 @@ public class RoleController {
      */
     @RequestMapping("/delByid")
     public void delete(Role role) {
-        System.out.println("要删除角色id" + role.getId());
         roleService.deleteById(role.getId());
     }
 

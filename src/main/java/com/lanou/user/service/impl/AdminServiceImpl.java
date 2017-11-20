@@ -96,4 +96,29 @@ public class AdminServiceImpl implements AdminService {
     public void deleteAdmin(int id) {
         adminMapper.deleteAdmin(id);
     }
+
+    /**
+     * 重置密码
+     * @param id
+     */
+    public void resetPwd(int id) {
+        adminMapper.resetPwd(id);
+    }
+
+    /**
+     * 验证邮箱
+     * @param email
+     * @return
+     */
+    public Admin findByEmail(String email) {
+        return adminMapper.findByEmail(email);
+    }
+
+    /**
+     * 初始密码
+     * @param email
+     */
+    public void updateByEmail(String email) {
+        adminMapper.updateByEmail(email);
+    }
 }
