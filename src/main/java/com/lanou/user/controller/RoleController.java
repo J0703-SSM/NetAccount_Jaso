@@ -93,6 +93,7 @@ public class RoleController {
     @ResponseBody
     @RequestMapping("/selectByid")
     public int select(Role role) {
+        System.out.println("delete : "+role.getId());
         List<Integer> list = roleService.findById(role.getId());
 
         return list.size();

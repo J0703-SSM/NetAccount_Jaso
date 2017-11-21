@@ -4,17 +4,17 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>登录系统</title>
-    <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global.css"/>
-    <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global_color.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="${pageContext.request.contextPath}/resources/styles/global.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="${pageContext.request.contextPath}/resources/styles/global_color.css"/>
 
-    <link type="text/css" rel="stylesheet" href="/resources/w2ui-1.5.rc1/w2ui-1.5.rc1.css"/>
-    <script src="/resources/js/jquery-3.2.1.js"></script>
-    <script type="text/javascript" src="/resources/w2ui-1.5.rc1/w2ui-1.5.rc1.js"></script>
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/resources/w2ui-1.5.rc1/w2ui-1.5.rc1.css"/>
+    <script src="${pageContext.request.contextPath}/resources/js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/w2ui-1.5.rc1/w2ui-1.5.rc1.js"></script>
 
 </head>
 <body class="index">
 <div class="login_box">
-    <form id="loginForm" action="/user_admin/login">
+    <form id="loginForm" action="${pageContext.request.contextPath}/user_admin/login">
         <table>
             <tr>
                 <td class="login_info">账号：</td>
@@ -36,7 +36,7 @@
                 <td class="login_info">验证码：</td>
                 <td class="width70"><input name="verifyCodeInput" type="text" class="width70"
                                            placeholder="(不分大小写)"/></td>
-                <td><img src="/user_admin/getVerifyCode" alt="验证码"
+                <td><img src="${pageContext.request.contextPath}/user_admin/getVerifyCode" alt="验证码"
                          title="点击更换" id="verifyCodeImage" onclick="changeImage()"/>
                 </td>
                 <td>
@@ -48,7 +48,7 @@
                     <a class="w2ui-btn" onclick="popup()">忘记密码?</a>
                 </td>
                 <td class="login_button" colspan="2">
-                    <input id="sub" type="image" src="/resources/images/login_btn.png">
+                    <input id="sub" type="image" src="${pageContext.request.contextPath}/resources/images/login_btn.png">
                 </td>
                 <td>
                     <span class="required">${error}</span>
@@ -62,7 +62,7 @@
 
     <%--点击更新验证--%>
     function changeImage() {
-        $("#verifyCodeImage").attr('src', '/user_admin/getVerifyCode?a=' + Math.random());
+        $("#verifyCodeImage").attr('src', '${pageContext.request.contextPath}/user_admin/getVerifyCode?a=' + Math.random());
     }
 
     //        忘记密码
@@ -82,7 +82,7 @@
     function verifyEmail() {
 //        popup1();
         $.ajax({
-            url: "/user_admin/verifyEmail",
+            url: "${pageContext.request.contextPath}/user_admin/verifyEmail",
             type: "get",
             data: {
                 "email": $("#email").val()
@@ -105,7 +105,7 @@
         setTimeout(function () { w2popup.unlock(); }, 3000);
         w2alert("新的初始密码正发送到您的邮箱...");
         $.ajax({
-            url: "/user_admin/sendEmail",
+            url: "${pageContext.request.contextPath}/user_admin/sendEmail",
             type: "get",
             data: {
                 "email": $("#email").val()
@@ -113,6 +113,7 @@
             success: function (data) {
                 if (data == 1){
 
+                    w2alert().close();
                     w2popup.open({
                         title: ' 邮件已发送成功:',
                         body: '<div class="w2ui-centered"><h1>√  新密码已发送到邮箱,请注意查收!</h1>'

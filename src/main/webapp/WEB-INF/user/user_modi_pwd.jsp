@@ -5,9 +5,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
-    <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global.css"/>
-    <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global_color.css"/>
-    <script src="/resources/js/jquery-3.2.1.js"></script>
+    <link type="text/css" rel="stylesheet" media="all" href="${pageContext.request.contextPath}/resources/styles/global.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="${pageContext.request.contextPath}/resources/styles/global_color.css"/>
+    <script src="${pageContext.request.contextPath}/resources/js/jquery-3.2.1.js"></script>
     <script language="javascript" type="text/javascript">
         //保存成功的提示信息
         function showResult() {
@@ -19,7 +19,7 @@
                 $("#msg").hide();
             }
 
-            if ($("#oldpwd").val() !== ${applicationScope.loginAdmin.password}) {
+            if ($("#oldpwd").val() != ${applicationScope.loginAdmin.password}) {
                 $("#old_msg").html("*旧密码错误!");
                 return false;
             } else {
@@ -46,7 +46,7 @@
             }
             //提交表单
             $.ajax({
-                url: "/user_admin/update_user_pwd",
+                url: "${pageContext.request.contextPath}/user_admin/update_user_pwd",
                 type: "get",
                 data: {
                     "password": $("#newpwd").val()
@@ -72,8 +72,8 @@
 <body>
 <!--Logo区域开始-->
 <div id="header">
-    <img src="../../resources/images/logo.png" alt="logo" class="left"/>
-    <a href="/user_admin/quit">[退出]</a>
+    <img src="${pageContext.request.contextPath}../../resources/images/logo.png" alt="logo" class="left"/>
+    <a href="${pageContext.request.contextPath}/user_admin/quit">[退出]</a>
 </div>
 <!--Logo区域结束-->
 <!--导航区域开始-->
@@ -81,28 +81,28 @@
     <ul id="menu">
         <li><a href="/index" class="index_off"></a></li>
         <c:if test="${loginPrivi['1'] != null}">
-            <li><a href="/user_role/findAllRole" class="role_off"></a></li>
+            <li><a href="${pageContext.request.contextPath}/user_role/findAllRole" class="role_off"></a></li>
         </c:if>
         <c:if test="${loginPrivi['2'] != null}">
-            <li><a href="/admin_list" class="admin_off"></a></li>
+            <li><a href="${pageContext.request.contextPath}/admin_list" class="admin_off"></a></li>
         </c:if>
         <c:if test="${loginPrivi['3'] != null}">
-            <li><a href="/fee_list" class="fee_off"></a></li>
+            <li><a href="${pageContext.request.contextPath}/fee_list" class="fee_off"></a></li>
         </c:if>
         <c:if test="${loginPrivi['4'] != null}">
-            <li><a href="/account_list" class="account_off"></a></li>
+            <li><a href="${pageContext.request.contextPath}/account_list" class="account_off"></a></li>
         </c:if>
         <c:if test="${loginPrivi['5'] != null}">
-            <li><a href="/service_list" class="service_off"></a></li>
+            <li><a href="${pageContext.request.contextPath}/service_list" class="service_off"></a></li>
         </c:if>
         <c:if test="${loginPrivi['6'] != null}">
-            <li><a href="/bill_list" class="bill_off"></a></li>
+            <li><a href="${pageContext.request.contextPath}/bill_list" class="bill_off"></a></li>
         </c:if>
         <c:if test="${loginPrivi['7'] != null}">
-            <li><a href="/report_list" class="report_off"></a></li>
+            <li><a href="${pageContext.request.contextPath}/report_list" class="report_off"></a></li>
         </c:if>
-        <li><a href="/user_info" class="information_off"></a></li>
-        <li><a href="/user_modi_pwd" class="password_on"></a></li>
+        <li><a href="${pageContext.request.contextPath}/user_info" class="information_off"></a></li>
+        <li><a href="${pageContext.request.contextPath}/user_modi_pwd" class="password_on"></a></li>
     </ul>
 </div>
 <!--导航区域结束-->
@@ -111,7 +111,7 @@
     <div id="updateAgain" class="save_success" style="display: none;text-align: center">
         <h1>温馨提示: 密码修改成功 !</h1>
         <br>
-        <h2>使用您的新密码去登录吧 : <a href="/user_admin/quit">重新登录</a></h2>
+        <h2>使用您的新密码去登录吧 : <a href="${pageContext.request.contextPath}/user_admin/quit">重新登录</a></h2>
     </div>
 
     <form id="f"class="main_form">
@@ -133,7 +133,7 @@
 
         <div class="button_info clearfix">
             <input type="button" value="保存" class="btn_save" onclick="showResult();"/>
-            <input type="button" value="取消" class="btn_save" onclick="location.href='/index'"/>
+            <input type="button" value="取消" class="btn_save" onclick="location.href='${pageContext.request.contextPath}/index'"/>
             <br>
             <br>
             <div id="msg" class="validate_msg_short error_msg" style="display: none">*请将信息填写完整! 否则无法确定此操作!</div>

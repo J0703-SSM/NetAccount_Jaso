@@ -7,7 +7,9 @@
     <title></title>
     <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global.css"/>
     <link type="text/css" rel="stylesheet" media="all" href="/resources/styles/global_color.css"/>
+    <link type="text/css" rel="stylesheet" href="/resources/w2ui-1.5.rc1/w2ui-1.5.rc1.css"/>
     <script src="/resources/js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="/resources/w2ui-1.5.rc1/w2ui-1.5.rc1.js"></script>
     <script language="javascript" type="text/javascript">
 
         //排序按钮的点击事件
@@ -37,17 +39,42 @@
         }
         //删除
         function deleteFee(id) {
-            var q = window.confirm("确定要删除此资费吗？");
 
-            $.ajax({
-                url: "/cost/delete",
-                type:"get",
-                data: {
-                    cost_id: id
-                },success: function (){}
+            popup(id)
+
+        }
+        function popup(data) {
+            w2popup.open({
+                width: 300,
+                height: 200,
+                title: '{ 身份验证 }',
+                body: '<div class="w2ui-centered">请输入密码:' +
+                '<input id="pwd" type="password" class="width200"/></div>',
+                buttons: '<button class="w2ui-btn" onclick="password('+data+')">残忍删除</button>' +
+                '<button class="w2ui-btn" onclick="w2popup.close();">还是不删除了吧</button>',
+                showMax: true
             });
-            $("#msg").html("删除操作成功!");
-            document.getElementById("operate_result_info").style.display = "block";
+        }
+
+        function password(data) {
+            if ($("#pwd").val() == ${loginAdmin.password}) {
+                w2popup.close();
+                $("#msg").html("执行删除操作后, 不可恢复!");
+                document.getElementById("operate_result_info").style.display = "block";
+                //删除
+                $.ajax({
+                    url: "/cost/delete",
+                    type:"get",
+                    data: {
+                        cost_id: data
+                    },success: function (){}
+                });
+                $("#msg").html("删除操作成功!");
+                document.getElementById("operate_result_info").style.display = "block";
+            }else {
+                w2alert("× 密码错误!");
+            }
+
         }
     </script>
 </head>
